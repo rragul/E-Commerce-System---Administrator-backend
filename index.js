@@ -1,19 +1,23 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Category = require("./models/category");
 require("dotenv").config();
-const Product = require("./models/product");
+const cors = require("cors");
+
 const app = express();
+app.use(cors());
+
+app.use(function(req, res, next) {
+    res.header('Content-Range', 'products 0-10/10');
+    next();
+  });
 
 const port = process.env.PORT || 5000;
 const URI = process.env.URI;
 
-// const indexRouter = require('./routes/index');
 const categoriesRouter = require("./routes/categoriesRoutes");
 const productsRouter = require("./routes/productsRoutes");
 const subCategoriesRouter = require("./routes/subCategoriesRoutes");
 
-// app.use('/', indexRouter);
 app.use("/categories", categoriesRouter);
 app.use("/products", productsRouter);
 app.use("/subCategories", subCategoriesRouter);
@@ -32,15 +36,5 @@ async function connect() {
 }
 
 connect();
-
-app.get("/", (req, res) => {
-    Category.find({}, (err, mobile) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.json(mobile);
-      }
-    });
-  });
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
